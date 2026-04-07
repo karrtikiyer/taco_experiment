@@ -17,7 +17,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from taco_experiment.data import load_dataset_split, SUPPORTED_DATASETS
+from taco_experiment.data import load_dataset_split, model_short_name, SUPPORTED_DATASETS
 
 
 def load_generations(run_dir: Path) -> dict:
@@ -314,11 +314,14 @@ def main():
                         help="Name of the run directory under results/")
     parser.add_argument("--dataset", type=str, default="taco",
                         choices=list(SUPPORTED_DATASETS))
+    parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-Coder-7B-Instruct",
+                        help="HuggingFace model id (used to locate results directory)")
     parser.add_argument("--output", type=str, default=None,
-                        help="Output HTML path (default: results/<run-name>/problem_viewer.html)")
+                        help="Output HTML path (default: inside run results dir)")
     args = parser.parse_args()
 
-    results_dir = Path(__file__).parent.parent / "results" / args.run_name
+    model_dir = model_short_name(args.model)
+    results_dir = Path(__file__).parent.parent / "results" / args.dataset / model_dir / args.run_name
     if not results_dir.exists():
         print(f"Error: {results_dir} does not exist")
         sys.exit(1)

@@ -18,7 +18,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from taco_experiment.data import load_dataset_split, _has_image, SUPPORTED_DATASETS
+from taco_experiment.data import load_dataset_split, _has_image, model_short_name, SUPPORTED_DATASETS
 
 
 def load_jsonl(path):
@@ -96,14 +96,17 @@ def build_gen_html(solutions, exec_results, label):
 
 def main():
     parser = argparse.ArgumentParser(description="Side-by-side decoding comparison viewer")
-    parser.add_argument("--left", type=str, required=True, help="Left run name (e.g. full_100_7b)")
-    parser.add_argument("--right", type=str, required=True, help="Right run name (e.g. full_100_7b_pless)")
+    parser.add_argument("--left", type=str, required=True, help="Left run name (e.g. full_100)")
+    parser.add_argument("--right", type=str, required=True, help="Right run name (e.g. full_100_pless)")
     parser.add_argument("--dataset", type=str, default="taco",
                         choices=list(SUPPORTED_DATASETS))
+    parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-Coder-7B-Instruct",
+                        help="HuggingFace model id (used to locate results directory)")
     parser.add_argument("--output", type=str, default=None)
     args = parser.parse_args()
 
-    results_root = Path(__file__).parent.parent / "results"
+    model_dir = model_short_name(args.model)
+    results_root = Path(__file__).parent.parent / "results" / args.dataset / model_dir
     left_dir = results_root / args.left
     right_dir = results_root / args.right
 

@@ -36,37 +36,43 @@ git clone https://github.com/ryttry/p-less-sampling.git src/p-less-sampling
 
 ### Run an experiment
 
+Results are saved to `results/<dataset>/<model_short>/<run_name>/` where `model_short` is auto-derived from the HuggingFace model id (e.g., `qwen2.5-coder-7b`).
+
 ```bash
 # 7B model with top_p decoding, 100 problems
+# -> results/taco/qwen2.5-coder-7b/full_100/
 PYTHONPATH=src uv run python -m taco_experiment.pipeline \
     --model Qwen/Qwen2.5-Coder-7B-Instruct \
     --decoding-method top_p \
     --n-problems 100 \
-    --run-name full_100_7b
+    --run-name full_100
 
 # 7B model with p-less decoding
+# -> results/taco/qwen2.5-coder-7b/full_100_pless/
 PYTHONPATH=src uv run python -m taco_experiment.pipeline \
     --model Qwen/Qwen2.5-Coder-7B-Instruct \
     --decoding-method pless \
     --n-problems 100 \
-    --run-name full_100_7b_pless
+    --run-name full_100_pless
 
 # 14B model on GPU with bfloat16 and FlashAttention-2
+# -> results/taco/qwen2.5-coder-14b/run_top_p/
 PYTHONPATH=src uv run python -m taco_experiment.pipeline \
     --model Qwen/Qwen2.5-Coder-14B-Instruct \
     --decoding-method top_p \
     --n-problems 100 \
-    --run-name run_14b_top_p \
+    --run-name run_top_p \
     --dtype bfloat16 \
     --attn-implementation flash_attention_2
 
-# APPS dataset (5000 test problems, 3 difficulty levels)
+# APPS dataset, 7B model
+# -> results/apps/qwen2.5-coder-7b/run_top_p/
 PYTHONPATH=src uv run python -m taco_experiment.pipeline \
     --dataset apps \
     --model Qwen/Qwen2.5-Coder-7B-Instruct \
     --decoding-method top_p \
     --n-problems 100 \
-    --run-name apps_100_7b
+    --run-name run_top_p
 ```
 
 The pipeline runs five phases: dataset loading, generation (with checkpointing), execution, pass@k computation, and CodeBLEU diversity metrics. It supports `--skip-generation`, `--skip-execution`, and `--skip-diversity` flags to resume or recompute individual phases.
@@ -75,31 +81,36 @@ The pipeline runs five phases: dataset loading, generation (with checkpointing),
 
 ```bash
 # Usage: ./scripts/run_all_methods.sh <model> <n_problems> <prefix> <dtype> <attn> <dataset>
-./scripts/run_all_methods.sh Qwen/Qwen2.5-Coder-14B-Instruct 100 run_14b bfloat16 flash_attention_2
+# Creates: results/taco/qwen2.5-coder-14b/run_{top_p,temp_only,top_p_only,pless,pless_norm}/
+./scripts/run_all_methods.sh Qwen/Qwen2.5-Coder-14B-Instruct 100 run bfloat16 flash_attention_2
 
-# On APPS dataset
-./scripts/run_all_methods.sh Qwen/Qwen2.5-Coder-14B-Instruct 100 apps_14b bfloat16 "" apps
+# APPS dataset, different model
+# Creates: results/apps/qwen2.5-coder-7b/run_{top_p,...}/
+./scripts/run_all_methods.sh Qwen/Qwen2.5-Coder-7B-Instruct 100 run auto "" apps
 ```
 
 This runs `top_p`, `temp_only`, `top_p_only`, `pless`, and `pless_norm` sequentially with incremental checkpointing. See [RUNPOD.md](RUNPOD.md) for GPU setup instructions.
 
 ### Recalculate metrics excluding image problems
 
-8 of the 100 sampled problems contain `<image>` tags that text-only models cannot interpret. To recalculate metrics with these excluded:
+8 of the 100 sampled TACO problems contain `<image>` tags that text-only models cannot interpret. To recalculate metrics with these excluded:
 
 ```bash
-PYTHONPATH=src uv run python scripts/recalc_exclude_image.py --run-name full_100_7b
+PYTHONPATH=src uv run python scripts/recalc_exclude_image.py \
+    --dataset taco --model Qwen/Qwen2.5-Coder-7B-Instruct --run-name full_100
 ```
 
 ### Browse problems and generations
 
 ```bash
 # Single-run viewer (problem statements, GT solutions, generations with PASS/FAIL)
-PYTHONPATH=src uv run python scripts/view_problems.py --run-name full_100_7b
+PYTHONPATH=src uv run python scripts/view_problems.py \
+    --dataset taco --model Qwen/Qwen2.5-Coder-7B-Instruct --run-name full_100
 
-# Side-by-side comparison of two decoding methods
+# Side-by-side comparison of two decoding methods (same model)
 PYTHONPATH=src uv run python scripts/view_comparison.py \
-    --left full_100_7b --right full_100_7b_pless
+    --dataset taco --model Qwen/Qwen2.5-Coder-7B-Instruct \
+    --left full_100 --right full_100_pless
 ```
 
 ### Run tests
@@ -128,12 +139,16 @@ scripts/
     view_comparison.py      # Side-by-side HTML comparison of two runs
     recalc_exclude_image.py # Recompute metrics excluding <image> problems
 
-results/                    # Experiment outputs (included in repo)
-    full_100/               # 3B baseline
-    full_100_7b/            # 7B + top_p
-    full_100_7b_pless/      # 7B + p-less
-    full_100_7b_pless_norm/ # 7B + p-less-norm
-    smoke_test_20*/         # 20-problem smoke tests
+results/                        # Experiment outputs (included in repo)
+    <dataset>/                  #   e.g. taco/, apps/
+        <model_short>/          #   e.g. qwen2.5-coder-7b/
+            <run_name>/         #   e.g. full_100/, full_100_pless/
+                report.json
+                sample_meta.json
+                generations.jsonl
+                execution.jsonl
+                pass_at_k.json
+                diversity_metrics.json
 
 tests/                      # pytest suite
 ```

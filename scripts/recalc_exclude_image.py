@@ -17,7 +17,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from taco_experiment.data import load_dataset_split, _has_image, SUPPORTED_DATASETS
+from taco_experiment.data import load_dataset_split, _has_image, model_short_name, SUPPORTED_DATASETS
 from taco_experiment.execute import compute_pass_at_k
 from taco_experiment.diversity import (
     parse_ground_truth_solutions, quality_vs_ground_truth,
@@ -30,9 +30,12 @@ def main():
     parser.add_argument("--run-name", type=str, required=True)
     parser.add_argument("--dataset", type=str, default="taco",
                         choices=list(SUPPORTED_DATASETS))
+    parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-Coder-7B-Instruct",
+                        help="HuggingFace model id (used to locate results directory)")
     args = parser.parse_args()
 
-    results_dir = Path(__file__).parent.parent / "results" / args.run_name
+    model_dir = model_short_name(args.model)
+    results_dir = Path(__file__).parent.parent / "results" / args.dataset / model_dir / args.run_name
 
     with open(results_dir / "sample_meta.json") as f:
         meta = json.load(f)

@@ -9,7 +9,7 @@ from .config import (
     RESULTS_DIR, MODEL_NAME, NUM_SAMPLES, TEMPERATURE, TOP_P,
     SMOKE_TEST_SIZE, FULL_TEST_SIZE, SEED,
 )
-from .data import load_dataset_split, stratified_sample, get_difficulty_distribution, SUPPORTED_DATASETS
+from .data import load_dataset_split, stratified_sample, get_difficulty_distribution, model_short_name, SUPPORTED_DATASETS
 from .generate import load_model, generate_all, load_existing_generations, DECODING_METHODS
 from .execute import run_evaluation
 from .diversity import compute_diversity_metrics
@@ -47,7 +47,8 @@ def run_pipeline(n_problems=SMOKE_TEST_SIZE, run_name="smoke_test",
         skip_execution: if True, skip execution entirely
         skip_diversity: if True, skip diversity computation
     """
-    output_dir = RESULTS_DIR / run_name
+    model_dir = model_short_name(model_name)
+    output_dir = RESULTS_DIR / dataset_name / model_dir / run_name
     output_dir.mkdir(parents=True, exist_ok=True)
 
     gen_checkpoint = output_dir / "generations.jsonl"

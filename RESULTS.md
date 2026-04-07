@@ -261,4 +261,4 @@ PYTHONPATH=src uv run python scripts/recalc_exclude_image.py --run-name <run_nam
 PYTHONPATH=src uv run python scripts/view_comparison.py --left full_100_7b --right full_100_7b_pless
 ```
 
-Raw results are stored in `results/<run_name>/` with `report.json`, `pass_at_k.json`, `diversity_metrics.json`, `execution.jsonl`, and `generations.jsonl`.
+Raw results are stored in `results/<dataset>/<model_short>/<run_name>/` with `report.json`, `pass_at_k.json`, `diversity_metrics.json`, `execution.jsonl`, and `generations.jsonl`.

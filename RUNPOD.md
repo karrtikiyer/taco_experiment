@@ -63,45 +63,50 @@ python -c "import torch; print(f'CUDA: {torch.cuda.is_available()}, GPUs: {torch
 
 ### All 5 decoding methods (recommended)
 
+Results go to `results/<dataset>/<model_short>/<prefix>_<method>/`.
+
 ```bash
 cd /workspace/taco_experiment
 
 # Usage: ./scripts/run_all_methods.sh <model> <n_problems> <prefix> <dtype> <attn> <dataset>
 # Runs: top_p, temp_only, top_p_only, pless, pless_norm sequentially
-# Dataset defaults to "taco"; pass "apps" as 6th arg for APPS
 
-# 14B model, 100 problems, bfloat16
+# 14B model, 100 TACO problems, bfloat16
+# -> results/taco/qwen2.5-coder-14b/run_{top_p,temp_only,...}/
 tmux new -s experiment
-./scripts/run_all_methods.sh Qwen/Qwen2.5-Coder-14B-Instruct 100 run_14b bfloat16
+./scripts/run_all_methods.sh Qwen/Qwen2.5-Coder-14B-Instruct 100 run bfloat16
 
 # 14B with FlashAttention-2 (faster, requires Ampere+ GPU)
-./scripts/run_all_methods.sh Qwen/Qwen2.5-Coder-14B-Instruct 100 run_14b bfloat16 flash_attention_2
+./scripts/run_all_methods.sh Qwen/Qwen2.5-Coder-14B-Instruct 100 run bfloat16 flash_attention_2
 
 # 32B model, full 1000 problems
-./scripts/run_all_methods.sh Qwen/Qwen2.5-Coder-32B-Instruct 1000 run_32b bfloat16 flash_attention_2
+./scripts/run_all_methods.sh Qwen/Qwen2.5-Coder-32B-Instruct 1000 run bfloat16 flash_attention_2
 
 # APPS dataset, 14B model
-./scripts/run_all_methods.sh Qwen/Qwen2.5-Coder-14B-Instruct 100 apps_14b bfloat16 flash_attention_2 apps
+# -> results/apps/qwen2.5-coder-14b/run_{top_p,...}/
+./scripts/run_all_methods.sh Qwen/Qwen2.5-Coder-14B-Instruct 100 run bfloat16 flash_attention_2 apps
 ```
 
 ### Single method
 
 ```bash
+# -> results/taco/qwen2.5-coder-14b/run_top_p/
 PYTHONPATH=src uv run python -m taco_experiment.pipeline \
     --model Qwen/Qwen2.5-Coder-14B-Instruct \
     --decoding-method top_p \
     --n-problems 100 \
-    --run-name run_14b_top_p \
+    --run-name run_top_p \
     --dtype bfloat16 \
     --attn-implementation flash_attention_2
 
-# Or on APPS dataset:
+# APPS dataset:
+# -> results/apps/qwen2.5-coder-14b/run_top_p/
 PYTHONPATH=src uv run python -m taco_experiment.pipeline \
     --dataset apps \
     --model Qwen/Qwen2.5-Coder-14B-Instruct \
     --decoding-method top_p \
     --n-problems 100 \
-    --run-name apps_14b_top_p \
+    --run-name run_top_p \
     --dtype bfloat16
 ```
 
@@ -110,11 +115,12 @@ PYTHONPATH=src uv run python -m taco_experiment.pipeline \
 Run 20 problems with one method to verify everything works:
 
 ```bash
+# -> results/taco/qwen2.5-coder-14b/smoke/
 PYTHONPATH=src uv run python -m taco_experiment.pipeline \
     --model Qwen/Qwen2.5-Coder-14B-Instruct \
     --decoding-method top_p \
     --n-problems 20 \
-    --run-name smoke_14b \
+    --run-name smoke \
     --dtype bfloat16
 ```
 
@@ -127,10 +133,10 @@ In a separate `tmux` pane or SSH session:
 nvidia-smi -l 5
 
 # Generation progress (count of completed problems)
-watch -n 30 'wc -l /workspace/taco_experiment/results/*/generations.jsonl'
+watch -n 30 'wc -l /workspace/taco_experiment/results/*/*/*/generations.jsonl'
 
 # Execution progress
-watch -n 30 'wc -l /workspace/taco_experiment/results/*/execution.jsonl'
+watch -n 30 'wc -l /workspace/taco_experiment/results/*/*/*/execution.jsonl'
 
 # Disk usage
 df -h /workspace

@@ -14,7 +14,7 @@ wheels/
 
 # Generated HTML viewers (large, regenerable)
 results/**/problem_viewer.html
-results/comparison_*.html
+results/**/comparison_*.html
 
 # Scratch files
 input.txt

@@ -8,6 +8,20 @@ from datasets import load_dataset as hf_load_dataset
 from .config import SEED
 
 
+def model_short_name(model_id: str) -> str:
+    """Derive a filesystem-safe short name from a HuggingFace model identifier.
+
+    Examples:
+        "Qwen/Qwen2.5-Coder-7B-Instruct" -> "qwen2.5-coder-7b"
+        "meta-llama/Llama-3-8B-Instruct"  -> "llama-3-8b"
+    """
+    name = model_id.split("/")[-1].lower()
+    for suffix in ("-instruct", "-chat", "-base"):
+        if name.endswith(suffix):
+            name = name[: -len(suffix)]
+    return name
+
+
 DATASET_REGISTRY = {
     "taco": {
         "hf_id": "BAAI/TACO",

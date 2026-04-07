@@ -32,6 +32,14 @@ Measure pass@k and diversity of code generation solutions on the TACO dataset te
 3. **Self-CodeBLEU**: Inter-sample diversity (lower = more diverse)
 4. **GT Max-Recall**: For each GT solution, max CodeBLEU against any generation; measures solution space coverage
 
+## Results Directory Structure
+```
+results/<dataset>/<model_short>/<run_name>/
+```
+- `model_short` is auto-derived from HuggingFace model id via `model_short_name()`
+  (e.g., `Qwen/Qwen2.5-Coder-7B-Instruct` → `qwen2.5-coder-7b`)
+- Scripts accept `--dataset`, `--model`, and `--run-name` to resolve paths
+
 ## Experiment Design
 - Stratified sample of 100 problems across difficulty levels (seed=42)
 - 10 samples per problem
