@@ -51,13 +51,26 @@ PYTHONPATH=src uv run python -m taco_experiment.pipeline \
     --n-problems 100 \
     --run-name full_100_7b_pless
 
-# 3B model (default)
+# 14B model on GPU with bfloat16 and FlashAttention-2
 PYTHONPATH=src uv run python -m taco_experiment.pipeline \
+    --model Qwen/Qwen2.5-Coder-14B-Instruct \
+    --decoding-method top_p \
     --n-problems 100 \
-    --run-name full_100
+    --run-name run_14b_top_p \
+    --dtype bfloat16 \
+    --attn-implementation flash_attention_2
 ```
 
 The pipeline runs five phases: dataset loading, generation (with checkpointing), execution, pass@k computation, and CodeBLEU diversity metrics. It supports `--skip-generation`, `--skip-execution`, and `--skip-diversity` flags to resume or recompute individual phases.
+
+### Run all 5 decoding methods
+
+```bash
+# Usage: ./scripts/run_all_methods.sh <model> <n_problems> <prefix> <dtype> <attn>
+./scripts/run_all_methods.sh Qwen/Qwen2.5-Coder-14B-Instruct 100 run_14b bfloat16 flash_attention_2
+```
+
+This runs `top_p`, `temp_only`, `top_p_only`, `pless`, and `pless_norm` sequentially with incremental checkpointing. See [RUNPOD.md](RUNPOD.md) for GPU setup instructions.
 
 ### Recalculate metrics excluding image problems
 
@@ -99,6 +112,7 @@ src/taco_experiment/
         testing_util.py # Vendored from TACO for sandboxed code execution
 
 scripts/
+    run_all_methods.sh      # Batch runner for all 5 decoding methods
     view_problems.py        # HTML viewer for a single run
     view_comparison.py      # Side-by-side HTML comparison of two runs
     recalc_exclude_image.py # Recompute metrics excluding <image> problems
@@ -149,12 +163,14 @@ See [RESULTS.md](RESULTS.md) for full metric definitions, caveats, and analysis.
 
 ## Decoding Methods
 
-| Method | Temperature | Truncation | Source |
+| Method | Temperature | Truncation | Description |
 |---|---|---|---|
-| top_p | 0.7 | top_p=0.95 | Standard nucleus sampling |
-| p-less | 1.0 | Adaptive: p_i >= sum(p^2) | [ryttry/p-less-sampling](https://github.com/ryttry/p-less-sampling) |
-| p-less-norm | 1.0 | Normalized: p_i >= (V*sum(p^2)-1)/(V-1) | [ryttry/p-less-sampling](https://github.com/ryttry/p-less-sampling) |
+| top_p | 0.7 | top_p=0.95 | Standard nucleus sampling with temperature shaping |
+| temp_only | 0.7 | None (top_p=1.0) | Pure temperature sampling, no nucleus truncation |
+| top_p_only | 1.0 | top_p=0.95 | Pure nucleus sampling, no temperature shaping |
+| pless | 1.0 | Adaptive: p_i >= sum(p^2) | [ryttry/p-less-sampling](https://github.com/ryttry/p-less-sampling) |
+| pless_norm | 1.0 | Normalized: p_i >= (V*sum(p^2)-1)/(V-1) | [ryttry/p-less-sampling](https://github.com/ryttry/p-less-sampling) |
 
 ## Hardware
 
-All experiments were run on Apple Silicon (MPS) with the 7B model in bfloat16. Generation takes ~1.5 hours per 100 problems; execution ~20 minutes; diversity ~2 minutes.
+Local experiments (3B, 7B) were run on Apple Silicon (MPS). The pipeline supports CUDA GPUs with automatic multi-GPU sharding via `device_map="auto"`. Use `--dtype bfloat16` and `--attn-implementation flash_attention_2` for optimal GPU performance with larger models. See [RUNPOD.md](RUNPOD.md) for cloud GPU setup.
