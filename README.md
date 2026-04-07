@@ -1,6 +1,6 @@
-# TACO Decoding Experiment
+# Code Generation Decoding Experiment
 
-Measuring **pass@k** accuracy and **code diversity** of different decoding strategies on competitive programming problems from the [BAAI/TACO](https://huggingface.co/datasets/BAAI/TACO) dataset.
+Measuring **pass@k** accuracy and **code diversity** of different decoding strategies on competitive programming problems from the [BAAI/TACO](https://huggingface.co/datasets/BAAI/TACO) and [codeparrot/APPS](https://huggingface.co/datasets/codeparrot/apps) datasets.
 
 ## Key Finding
 
@@ -59,6 +59,14 @@ PYTHONPATH=src uv run python -m taco_experiment.pipeline \
     --run-name run_14b_top_p \
     --dtype bfloat16 \
     --attn-implementation flash_attention_2
+
+# APPS dataset (5000 test problems, 3 difficulty levels)
+PYTHONPATH=src uv run python -m taco_experiment.pipeline \
+    --dataset apps \
+    --model Qwen/Qwen2.5-Coder-7B-Instruct \
+    --decoding-method top_p \
+    --n-problems 100 \
+    --run-name apps_100_7b
 ```
 
 The pipeline runs five phases: dataset loading, generation (with checkpointing), execution, pass@k computation, and CodeBLEU diversity metrics. It supports `--skip-generation`, `--skip-execution`, and `--skip-diversity` flags to resume or recompute individual phases.
@@ -66,8 +74,11 @@ The pipeline runs five phases: dataset loading, generation (with checkpointing),
 ### Run all 5 decoding methods
 
 ```bash
-# Usage: ./scripts/run_all_methods.sh <model> <n_problems> <prefix> <dtype> <attn>
+# Usage: ./scripts/run_all_methods.sh <model> <n_problems> <prefix> <dtype> <attn> <dataset>
 ./scripts/run_all_methods.sh Qwen/Qwen2.5-Coder-14B-Instruct 100 run_14b bfloat16 flash_attention_2
+
+# On APPS dataset
+./scripts/run_all_methods.sh Qwen/Qwen2.5-Coder-14B-Instruct 100 apps_14b bfloat16 "" apps
 ```
 
 This runs `top_p`, `temp_only`, `top_p_only`, `pless`, and `pless_norm` sequentially with incremental checkpointing. See [RUNPOD.md](RUNPOD.md) for GPU setup instructions.
@@ -102,14 +113,14 @@ uv run pytest
 ```
 src/taco_experiment/
     config.py           # Constants (model, temperatures, k values)
-    data.py             # TACO dataset loading and stratified sampling
+    data.py             # Dataset loading (TACO/APPS) and stratified sampling
     generate.py         # Prompt building, model loading, sample generation
     execute.py          # Code execution, pass@k computation
     diversity.py        # CodeBLEU-based diversity metrics
     p_less_processors.py # HuggingFace LogitsProcessor wrappers for p-less
     pipeline.py         # End-to-end orchestration and CLI
     metrics/
-        testing_util.py # Vendored from TACO for sandboxed code execution
+        testing_util.py # Vendored from TACO/APPS for sandboxed code execution
 
 scripts/
     run_all_methods.sh      # Batch runner for all 5 decoding methods

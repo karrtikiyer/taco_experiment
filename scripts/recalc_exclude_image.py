@@ -17,7 +17,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from taco_experiment.data import load_taco_test, _has_image
+from taco_experiment.data import load_dataset_split, _has_image, SUPPORTED_DATASETS
 from taco_experiment.execute import compute_pass_at_k
 from taco_experiment.diversity import (
     parse_ground_truth_solutions, quality_vs_ground_truth,
@@ -28,6 +28,8 @@ from taco_experiment.diversity import (
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-name", type=str, required=True)
+    parser.add_argument("--dataset", type=str, default="taco",
+                        choices=list(SUPPORTED_DATASETS))
     args = parser.parse_args()
 
     results_dir = Path(__file__).parent.parent / "results" / args.run_name
@@ -35,8 +37,8 @@ def main():
     with open(results_dir / "sample_meta.json") as f:
         meta = json.load(f)
 
-    print(f"Loading TACO dataset to identify image problems...")
-    dataset = load_taco_test()
+    print(f"Loading {args.dataset.upper()} dataset to identify image problems...")
+    dataset = load_dataset_split(args.dataset)
 
     image_task_ids = set()
     for item in meta:

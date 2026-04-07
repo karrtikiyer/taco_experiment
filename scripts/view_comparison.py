@@ -18,7 +18,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from taco_experiment.data import load_taco_test, _has_image
+from taco_experiment.data import load_dataset_split, _has_image, SUPPORTED_DATASETS
 
 
 def load_jsonl(path):
@@ -98,6 +98,8 @@ def main():
     parser = argparse.ArgumentParser(description="Side-by-side decoding comparison viewer")
     parser.add_argument("--left", type=str, required=True, help="Left run name (e.g. full_100_7b)")
     parser.add_argument("--right", type=str, required=True, help="Right run name (e.g. full_100_7b_pless)")
+    parser.add_argument("--dataset", type=str, default="taco",
+                        choices=list(SUPPORTED_DATASETS))
     parser.add_argument("--output", type=str, default=None)
     args = parser.parse_args()
 
@@ -120,8 +122,8 @@ def main():
     left_label = run_label(args.left, left_report)
     right_label = run_label(args.right, right_report)
 
-    print("Loading TACO dataset...")
-    dataset = load_taco_test()
+    print(f"Loading {args.dataset.upper()} dataset...")
+    dataset = load_dataset_split(args.dataset)
 
     left_gens = load_jsonl(left_dir / "generations.jsonl")
     right_gens = load_jsonl(right_dir / "generations.jsonl")
@@ -134,6 +136,8 @@ def main():
     diff_colors = {
         "EASY": "#22c55e", "MEDIUM": "#eab308", "MEDIUM_HARD": "#f97316",
         "HARD": "#ef4444", "VERY_HARD": "#dc2626",
+        "introductory": "#22c55e", "interview": "#eab308",
+        "competition": "#ef4444",
     }
 
     cards = []

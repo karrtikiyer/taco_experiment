@@ -1,6 +1,6 @@
 # Running on RunPod GPU
 
-Guide for running the TACO decoding experiment on RunPod GPU pods.
+Guide for running the TACO/APPS decoding experiment on RunPod GPU pods.
 
 ## GPU Sizing
 
@@ -66,8 +66,9 @@ python -c "import torch; print(f'CUDA: {torch.cuda.is_available()}, GPUs: {torch
 ```bash
 cd /workspace/taco_experiment
 
-# Usage: ./scripts/run_all_methods.sh <model> <n_problems> <prefix> <dtype> <attn>
+# Usage: ./scripts/run_all_methods.sh <model> <n_problems> <prefix> <dtype> <attn> <dataset>
 # Runs: top_p, temp_only, top_p_only, pless, pless_norm sequentially
+# Dataset defaults to "taco"; pass "apps" as 6th arg for APPS
 
 # 14B model, 100 problems, bfloat16
 tmux new -s experiment
@@ -78,6 +79,9 @@ tmux new -s experiment
 
 # 32B model, full 1000 problems
 ./scripts/run_all_methods.sh Qwen/Qwen2.5-Coder-32B-Instruct 1000 run_32b bfloat16 flash_attention_2
+
+# APPS dataset, 14B model
+./scripts/run_all_methods.sh Qwen/Qwen2.5-Coder-14B-Instruct 100 apps_14b bfloat16 flash_attention_2 apps
 ```
 
 ### Single method
@@ -90,6 +94,15 @@ PYTHONPATH=src uv run python -m taco_experiment.pipeline \
     --run-name run_14b_top_p \
     --dtype bfloat16 \
     --attn-implementation flash_attention_2
+
+# Or on APPS dataset:
+PYTHONPATH=src uv run python -m taco_experiment.pipeline \
+    --dataset apps \
+    --model Qwen/Qwen2.5-Coder-14B-Instruct \
+    --decoding-method top_p \
+    --n-problems 100 \
+    --run-name apps_14b_top_p \
+    --dtype bfloat16
 ```
 
 ### Smoke test first

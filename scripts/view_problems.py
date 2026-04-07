@@ -17,7 +17,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from taco_experiment.data import load_taco_test
+from taco_experiment.data import load_dataset_split, SUPPORTED_DATASETS
 
 
 def load_generations(run_dir: Path) -> dict:
@@ -91,11 +91,10 @@ def build_html(problems: list, generations: dict, execution: dict, run_name: str
         exec_results = execution.get(task_id, [])
 
         diff_colors = {
-            "EASY": "#22c55e",
-            "MEDIUM": "#eab308",
-            "MEDIUM_HARD": "#f97316",
-            "HARD": "#ef4444",
-            "VERY_HARD": "#dc2626",
+            "EASY": "#22c55e", "MEDIUM": "#eab308", "MEDIUM_HARD": "#f97316",
+            "HARD": "#ef4444", "VERY_HARD": "#dc2626",
+            "introductory": "#22c55e", "interview": "#eab308",
+            "competition": "#ef4444",
         }
         badge_color = diff_colors.get(difficulty, "#6b7280")
 
@@ -212,7 +211,7 @@ def build_html(problems: list, generations: dict, execution: dict, run_name: str
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TACO Problems — {run_name}</title>
+<title>Problem Viewer — {run_name}</title>
 <style>
 * {{ margin:0; padding:0; box-sizing:border-box; }}
 body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#0f172a; color:#e2e8f0; line-height:1.6; }}
@@ -278,7 +277,7 @@ code {{ font-family:'SF Mono', 'Fira Code', 'Cascadia Code', monospace; }}
 <div class="main">
 <div class="container">
     <div class="header">
-        <h1>TACO Problem Viewer</h1>
+        <h1>Problem Viewer</h1>
         <div class="subtitle">Run: <strong>{escape(run_name)}</strong> &middot; {len(problems)} problems</div>
         <div class="stats">
             {''.join(f'<div class="stat"><span style="color:{diff_colors.get(d,"#6b7280")}">{d}</span>: {c}</div>' for d, c in sorted(difficulty_counts.items()))}
@@ -310,9 +309,11 @@ function filterProblems(difficulty) {{
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate HTML viewer for TACO experiment problems")
+    parser = argparse.ArgumentParser(description="Generate HTML viewer for experiment problems")
     parser.add_argument("--run-name", type=str, required=True,
                         help="Name of the run directory under results/")
+    parser.add_argument("--dataset", type=str, default="taco",
+                        choices=list(SUPPORTED_DATASETS))
     parser.add_argument("--output", type=str, default=None,
                         help="Output HTML path (default: results/<run-name>/problem_viewer.html)")
     args = parser.parse_args()
@@ -332,8 +333,8 @@ def main():
 
     task_ids = {item["task_id"] for item in sample_meta}
 
-    print(f"Loading TACO dataset...")
-    dataset = load_taco_test()
+    print(f"Loading {args.dataset.upper()} dataset...")
+    dataset = load_dataset_split(args.dataset)
 
     problems = []
     for meta in sample_meta:

@@ -9,7 +9,7 @@ from .config import (
     RESULTS_DIR, MODEL_NAME, NUM_SAMPLES, TEMPERATURE, TOP_P,
     SMOKE_TEST_SIZE, FULL_TEST_SIZE, SEED,
 )
-from .data import load_taco_test, stratified_sample, get_difficulty_distribution
+from .data import load_dataset_split, stratified_sample, get_difficulty_distribution, SUPPORTED_DATASETS
 from .generate import load_model, generate_all, load_existing_generations, DECODING_METHODS
 from .execute import run_evaluation
 from .diversity import compute_diversity_metrics
@@ -29,6 +29,7 @@ def load_json(path):
 
 def run_pipeline(n_problems=SMOKE_TEST_SIZE, run_name="smoke_test",
                  model_name=MODEL_NAME, decoding_method="top_p",
+                 dataset_name="taco",
                  dtype="auto", attn_implementation=None,
                  skip_generation=False, skip_execution=False,
                  skip_diversity=False):
@@ -65,14 +66,18 @@ def run_pipeline(n_problems=SMOKE_TEST_SIZE, run_name="smoke_test",
         effective_temp = TEMPERATURE
         effective_top_p = TOP_P
 
-    print(f"=== TACO Experiment: {run_name} ({n_problems} problems) ===")
+    print(f"=== {dataset_name.upper()} Experiment: {run_name} ({n_problems} problems) ===")
+    print(f"  Dataset: {dataset_name}")
     print(f"  Decoding: {decoding_method}  temp={effective_temp}  top_p={effective_top_p}")
     print(f"  Output dir: {output_dir}")
 
+    exclude_no_solutions = (dataset_name == "apps")
+
     # Step 1: Load dataset and sample
-    print("\n[1/5] Loading TACO test set...")
-    dataset = load_taco_test()
-    samples = stratified_sample(dataset, n_problems)
+    print(f"\n[1/5] Loading {dataset_name.upper()} test set...")
+    dataset = load_dataset_split(dataset_name)
+    samples = stratified_sample(dataset, n_problems,
+                                exclude_no_solutions=exclude_no_solutions)
     dist = get_difficulty_distribution(samples)
     print(f"  Difficulty distribution: {dict(dist)}")
 
@@ -152,6 +157,7 @@ def run_pipeline(n_problems=SMOKE_TEST_SIZE, run_name="smoke_test",
     print("\n[5/5] Generating combined report...")
     report = {
         "config": {
+            "dataset": dataset_name,
             "model": model_name,
             "decoding_method": decoding_method,
             "temperature": effective_temp,
@@ -175,6 +181,9 @@ def run_pipeline(n_problems=SMOKE_TEST_SIZE, run_name="smoke_test",
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Run TACO experiment")
+    parser.add_argument("--dataset", type=str, default="taco",
+                        choices=list(SUPPORTED_DATASETS),
+                        help="Dataset to use (default: taco)")
     parser.add_argument("--model", type=str, default=MODEL_NAME)
     parser.add_argument("--decoding-method", type=str, default="top_p",
                         choices=list(DECODING_METHODS))
@@ -195,6 +204,7 @@ if __name__ == "__main__":
         run_name=args.run_name,
         model_name=args.model,
         decoding_method=args.decoding_method,
+        dataset_name=args.dataset,
         dtype=args.dtype,
         attn_implementation=args.attn_implementation,
         skip_generation=args.skip_generation,

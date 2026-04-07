@@ -15,8 +15,6 @@ SMOKE_TEST_SIZE = 20
 FULL_TEST_SIZE = 100
 SEED = 42
 
-DIFFICULTY_LEVELS = ["EASY", "MEDIUM", "MEDIUM_HARD", "HARD", "VERY_HARD"]
-
 MAX_EXECUTION_MEMORY_BYTES = 512 * 1024 * 1024  # 512 MB per executed solution
 MEMORY_WARNING_MB = 4096  # warn if parent RSS exceeds this during evaluation
 

@@ -3,12 +3,17 @@
 ## Goal
 Measure pass@k and diversity of code generation solutions on the TACO dataset test set, comparing standard top_p sampling against p-less adaptive decoding across model scales (3B, 7B).
 
-## Dataset
+## Datasets
 - **TACO** (Topics in Algorithmic COde generation): https://huggingface.co/datasets/BAAI/TACO
-- Test set: 1000 problems, each with multiple ground-truth Python solutions
-- 5 difficulty levels: EASY, MEDIUM, MEDIUM_HARD, HARD, VERY_HARD
-- Problems use either call-based (fn_name) or stdin-based I/O
-- 8 problems contain `<image>` tags and are excluded from metric calculation
+  - Test set: 1000 problems, each with multiple ground-truth Python solutions
+  - 5 difficulty levels: EASY, MEDIUM, MEDIUM_HARD, HARD, VERY_HARD
+  - 8 problems contain `<image>` tags and are excluded from metric calculation
+- **APPS** (Automated Programming Progress Standard): https://huggingface.co/datasets/codeparrot/apps
+  - Test set: 5000 problems (same field schema as TACO)
+  - 3 difficulty levels: introductory, interview, competition
+  - ~1235 test samples lack GT solutions (auto-excluded for diversity metrics)
+- Both datasets share the same schema: `question`, `solutions`, `input_output`, `starter_code`, `difficulty`
+- Select via `--dataset taco` or `--dataset apps` CLI flag
 
 ## Models
 - Qwen2.5-Coder-3B-Instruct: https://huggingface.co/Qwen/Qwen2.5-Coder-3B-Instruct

@@ -6,12 +6,14 @@ N=${2:-100}
 PREFIX=${3:-"gpu_run"}
 DTYPE=${4:-"auto"}
 ATTN=${5:-""}
+DATASET=${6:-"taco"}
 
 METHODS=(top_p temp_only top_p_only pless pless_norm)
 
 echo "============================================"
-echo "TACO Experiment - All Decoding Methods"
+echo "Experiment - All Decoding Methods"
 echo "============================================"
+echo "Dataset:  $DATASET"
 echo "Model:    $MODEL"
 echo "Problems: $N"
 echo "Prefix:   $PREFIX"
@@ -33,6 +35,7 @@ for METHOD in "${METHODS[@]}"; do
     echo ""
 
     PYTHONPATH=src uv run python -m taco_experiment.pipeline \
+        --dataset "$DATASET" \
         --model "$MODEL" \
         --decoding-method "$METHOD" \
         --n-problems "$N" \
