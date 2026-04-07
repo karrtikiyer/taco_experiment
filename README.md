@@ -115,10 +115,35 @@ tests/                      # pytest suite
 
 ## Metrics
 
-- **pass@k**: Unbiased estimator (Chen et al., 2021). Execution-based; correct iff all test cases pass.
-- **Quality vs GT**: CodeBLEU (Ren et al., 2020) of each generation against all ground truth solutions as multi-reference.
-- **Self-CodeBLEU**: Adaptation of Self-BLEU (Zhu et al., 2018). Each sample scored against the other 9 as references. Lower = more diverse.
-- **GT Max-Recall**: For each ground truth solution, max CodeBLEU against any generation. Measures how well the generation set covers the known solution space.
+### pass@k
+Unbiased estimator from Chen et al. (2021). A sample is correct iff it passes **all** test cases. Answers: *"What is the probability that at least 1 of k samples is correct?"*
+
+### Quality vs GT (precision-like)
+CodeBLEU (Ren et al., 2020) of each generation against all ground truth solutions as a multi-reference set. Averaged across all 10 generations and all problems.
+
+Answers: *"On average, does each generation resemble at least one correct solution?"* A model that always produces the same correct-looking approach scores high. This is a per-generation **quality** signal.
+
+### Self-CodeBLEU (diversity)
+Adaptation of Self-BLEU (Zhu et al., 2018). Each sample is scored against the other 9 as multi-references. Lower = more diverse.
+
+Answers: *"How similar are the 10 generations to each other?"* High means the model keeps producing near-identical code; low means it explores different implementations.
+
+### GT Max-Recall (coverage)
+For each ground truth solution, find the maximum CodeBLEU against any of the 10 generations. Average across all GT solutions.
+
+Answers: *"For each known correct approach, did the model generate something structurally close to it?"* You need **diverse** generations to score high — a model that only produces greedy solutions will miss GT solutions based on dynamic programming or brute force, pulling the average down.
+
+### Quality vs GT and GT Max-Recall differ in direction
+
+Both involve CodeBLEU between generations and ground truth, but they iterate over different outer loops:
+
+| | Quality vs GT | GT Max-Recall |
+|---|---|---|
+| Outer loop | Each generation | Each GT solution |
+| Reference set | All GTs (multi-ref) | Single GT, max across gens |
+| Analogy | Precision | Recall |
+
+If all 10 generations use the same algorithm, Quality vs GT stays high (each one matches some GT), but GT Max-Recall drops (GT solutions using other algorithms are uncovered).
 
 See [RESULTS.md](RESULTS.md) for full metric definitions, caveats, and analysis.
 
