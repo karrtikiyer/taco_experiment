@@ -29,6 +29,7 @@ def load_json(path):
 
 def run_pipeline(n_problems=SMOKE_TEST_SIZE, run_name="smoke_test",
                  model_name=MODEL_NAME, decoding_method="top_p",
+                 dtype="auto", attn_implementation=None,
                  skip_generation=False, skip_execution=False,
                  skip_diversity=False):
     """Run the full experiment pipeline with incremental checkpointing.
@@ -40,7 +41,7 @@ def run_pipeline(n_problems=SMOKE_TEST_SIZE, run_name="smoke_test",
         n_problems: number of problems to evaluate
         run_name: name for this run (used for output directory)
         model_name: HuggingFace model identifier
-        decoding_method: one of "top_p", "pless", "pless_norm"
+        decoding_method: one of "top_p", "temp_only", "top_p_only", "pless", "pless_norm"
         skip_generation: if True, skip generation entirely (use existing checkpoint)
         skip_execution: if True, skip execution entirely
         skip_diversity: if True, skip diversity computation
@@ -51,9 +52,18 @@ def run_pipeline(n_problems=SMOKE_TEST_SIZE, run_name="smoke_test",
     gen_checkpoint = output_dir / "generations.jsonl"
     exec_checkpoint = output_dir / "execution.jsonl"
 
-    is_pless = decoding_method in ("pless", "pless_norm")
-    effective_temp = 1.0 if is_pless else TEMPERATURE
-    effective_top_p = None if is_pless else TOP_P
+    if decoding_method in ("pless", "pless_norm"):
+        effective_temp = 1.0
+        effective_top_p = None
+    elif decoding_method == "temp_only":
+        effective_temp = TEMPERATURE
+        effective_top_p = 1.0
+    elif decoding_method == "top_p_only":
+        effective_temp = 1.0
+        effective_top_p = TOP_P
+    else:
+        effective_temp = TEMPERATURE
+        effective_top_p = TOP_P
 
     print(f"=== TACO Experiment: {run_name} ({n_problems} problems) ===")
     print(f"  Decoding: {decoding_method}  temp={effective_temp}  top_p={effective_top_p}")
@@ -81,7 +91,10 @@ def run_pipeline(n_problems=SMOKE_TEST_SIZE, run_name="smoke_test",
         print(f"  Loaded {len(generation_results)} cached generation results")
     else:
         print("\n[2/5] Loading model and generating solutions...")
-        model, tokenizer = load_model(model_name=model_name)
+        model, tokenizer = load_model(
+            model_name=model_name, dtype=dtype,
+            attn_implementation=attn_implementation,
+        )
         start = time.time()
         generation_results = generate_all(
             model, tokenizer, samples,
@@ -143,6 +156,8 @@ def run_pipeline(n_problems=SMOKE_TEST_SIZE, run_name="smoke_test",
             "decoding_method": decoding_method,
             "temperature": effective_temp,
             "top_p": effective_top_p,
+            "dtype": dtype,
+            "attn_implementation": attn_implementation,
             "num_samples": NUM_SAMPLES,
             "n_problems": n_problems,
             "seed": SEED,
@@ -165,6 +180,11 @@ if __name__ == "__main__":
                         choices=list(DECODING_METHODS))
     parser.add_argument("--n-problems", type=int, default=SMOKE_TEST_SIZE)
     parser.add_argument("--run-name", type=str, default="smoke_test")
+    parser.add_argument("--dtype", type=str, default="auto",
+                        choices=["auto", "float16", "bfloat16"],
+                        help="Model dtype (default: auto)")
+    parser.add_argument("--attn-implementation", type=str, default=None,
+                        help="Attention implementation, e.g. flash_attention_2")
     parser.add_argument("--skip-generation", action="store_true")
     parser.add_argument("--skip-execution", action="store_true")
     parser.add_argument("--skip-diversity", action="store_true")
@@ -175,6 +195,8 @@ if __name__ == "__main__":
         run_name=args.run_name,
         model_name=args.model,
         decoding_method=args.decoding_method,
+        dtype=args.dtype,
+        attn_implementation=args.attn_implementation,
         skip_generation=args.skip_generation,
         skip_execution=args.skip_execution,
         skip_diversity=args.skip_diversity,

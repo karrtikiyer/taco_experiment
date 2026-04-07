@@ -45,19 +45,29 @@ def build_prompt(sample):
     return prompt
 
 
-def load_model(model_name=MODEL_NAME):
-    """Load model and tokenizer."""
+def load_model(model_name=MODEL_NAME, dtype="auto", attn_implementation=None):
+    """Load model and tokenizer.
+
+    Args:
+        dtype: torch dtype string — "auto", "float16", or "bfloat16".
+        attn_implementation: optional, e.g. "flash_attention_2" for FA2 on
+            supported GPUs (Ampere+). None uses the default implementation.
+    """
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        torch_dtype="auto",
+
+    model_kwargs = dict(
+        torch_dtype=dtype if dtype == "auto" else getattr(torch, dtype),
         device_map="auto",
     )
+    if attn_implementation:
+        model_kwargs["attn_implementation"] = attn_implementation
+
+    model = AutoModelForCausalLM.from_pretrained(model_name, **model_kwargs)
     model.eval()
     return model, tokenizer
 
 
-DECODING_METHODS = ("top_p", "pless", "pless_norm")
+DECODING_METHODS = ("top_p", "temp_only", "top_p_only", "pless", "pless_norm")
 
 _PLESS_PROCESSORS = {
     "pless": PLessLogitsProcessor,
@@ -72,10 +82,12 @@ def generate_samples(model, tokenizer, prompt, n_samples=NUM_SAMPLES,
     """Generate n_samples code solutions for a given prompt.
 
     Args:
-        decoding_method: one of "top_p", "pless", "pless_norm".
-            - "top_p": standard temperature + nucleus sampling.
+        decoding_method: one of DECODING_METHODS.
+            - "top_p": temperature + nucleus sampling (T=0.7, top_p=0.95).
+            - "temp_only": pure temperature sampling (T=0.7, top_p=1.0).
+            - "top_p_only": pure nucleus sampling (T=1.0, top_p=0.95).
             - "pless" / "pless_norm": hyperparameter-free p-less decoding
-              (temp=1.0, no top_p; a LogitsProcessor applies the threshold).
+              (T=1.0, no top_p; a LogitsProcessor applies the threshold).
     """
     messages = [
         {"role": "system", "content": "You are an expert competitive programmer. Write clean, correct Python code to solve the given problem."},
@@ -97,6 +109,12 @@ def generate_samples(model, tokenizer, prompt, n_samples=NUM_SAMPLES,
 
     if decoding_method == "top_p":
         generate_kwargs["temperature"] = temperature
+        generate_kwargs["top_p"] = top_p
+    elif decoding_method == "temp_only":
+        generate_kwargs["temperature"] = temperature
+        generate_kwargs["top_p"] = 1.0
+    elif decoding_method == "top_p_only":
+        generate_kwargs["temperature"] = 1.0
         generate_kwargs["top_p"] = top_p
     elif decoding_method in _PLESS_PROCESSORS:
         generate_kwargs["temperature"] = 1.0

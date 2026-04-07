@@ -16,6 +16,8 @@ Measure pass@k and diversity of code generation solutions on the TACO dataset te
 
 ## Decoding Methods
 - **top_p**: Standard nucleus sampling (T=0.7, top_p=0.95)
+- **temp_only**: Pure temperature sampling (T=0.7, top_p=1.0) -- no nucleus truncation
+- **top_p_only**: Pure nucleus sampling (T=1.0, top_p=0.95) -- no temperature shaping
 - **p-less**: Adaptive threshold from ryttry/p-less-sampling (T=1.0, no top_p)
 - **p-less-norm**: Normalized variant of p-less (T=1.0, no top_p)
 
