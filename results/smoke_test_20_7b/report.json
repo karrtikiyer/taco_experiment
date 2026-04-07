@@ -1,0 +1,29 @@
+{
+  "config": {
+    "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+    "temperature": 0.7,
+    "top_p": 0.95,
+    "num_samples": 10,
+    "n_problems": 20,
+    "seed": 42
+  },
+  "difficulty_distribution": {
+    "MEDIUM": 4,
+    "MEDIUM_HARD": 4,
+    "EASY": 4,
+    "HARD": 4,
+    "VERY_HARD": 4
+  },
+  "pass_at_k": {
+    "pass@1": 0.025000000000000005,
+    "pass@3": 0.06208333333333334,
+    "pass@5": 0.08472222222222223,
+    "pass@8": 0.09888888888888889,
+    "pass@10": 0.1
+  },
+  "diversity": {
+    "quality_vs_gt": 0.21306851329266707,
+    "self_codebleu": 0.5362974489900516,
+    "gt_coverage": 0.3790780929596719
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "config": {
+    "model": "Qwen/Qwen2.5-Coder-3B-Instruct",
+    "temperature": 0.7,
+    "top_p": 0.95,
+    "num_samples": 10,
+    "n_problems": 20,
+    "seed": 42
+  },
+  "difficulty_distribution": {
+    "MEDIUM": 4,
+    "MEDIUM_HARD": 4,
+    "EASY": 4,
+    "HARD": 4,
+    "VERY_HARD": 4
+  },
+  "pass_at_k": {
+    "pass@1": 0.010000000000000004,
+    "pass@3": 0.026666666666666665,
+    "pass@5": 0.03888888888888889,
+    "pass@8": 0.048888888888888885,
+    "pass@10": 0.05
+  },
+  "diversity": {}
+}

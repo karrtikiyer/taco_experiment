@@ -1,0 +1,40 @@
+{
+  "config": {
+    "model": "Qwen/Qwen2.5-Coder-3B-Instruct",
+    "temperature": 0.7,
+    "top_p": 0.95,
+    "num_samples": 10,
+    "n_problems": 100,
+    "seed": 42
+  },
+  "difficulty_distribution": {
+    "EASY": 19,
+    "MEDIUM_HARD": 17,
+    "VERY_HARD": 18,
+    "HARD": 19,
+    "MEDIUM": 19
+  },
+  "pass_at_k": {
+    "pass@1": 0.010869565217391304,
+    "pass@3": 0.027898550724637684,
+    "pass@5": 0.040804002760524496,
+    "pass@8": 0.05628019323671498,
+    "pass@10": 0.06521739130434782
+  },
+  "diversity": {
+    "quality_vs_gt": 0.19647621306584964,
+    "self_codebleu": 0.4098176499105382,
+    "gt_coverage": 0.4234699479264697
+  },
+  "image_problems_excluded": [
+    133,
+    198,
+    282,
+    460,
+    876,
+    913,
+    935,
+    994
+  ],
+  "n_problems_after_exclusion": 92
+}

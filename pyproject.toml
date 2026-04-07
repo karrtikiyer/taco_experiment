@@ -1,0 +1,24 @@
+[project]
+name = "taco-experiment"
+version = "0.1.0"
+description = "Measure pass@k and diversity of code generation on TACO dataset"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "torch>=2.0",
+    "transformers>=4.40",
+    "accelerate",
+    "datasets>=2.14,<3",
+    "numpy",
+    "tqdm",
+    "psutil",
+    "pytest",
+    "codebleu",
+    "tree-sitter-python>=0.23,<0.24",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.uv.sources]
+codebleu = { git = "https://github.com/k4black/codebleu.git" }

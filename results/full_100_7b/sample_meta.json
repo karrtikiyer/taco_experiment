@@ -1,0 +1,402 @@
+[
+  {
+    "task_id": 29,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 234,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 120,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 385,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 919,
+    "difficulty": "VERY_HARD"
+  },
+  {
+    "task_id": 198,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 23,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 66,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 63,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 756,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 137,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 40,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 448,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 322,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 917,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 418,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 723,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 273,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 309,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 123,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 583,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 483,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 293,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 286,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 822,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 808,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 666,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 877,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 937,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 122,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 103,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 913,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 773,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 435,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 469,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 282,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 722,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 154,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 575,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 133,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 781,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 661,
+    "difficulty": "VERY_HARD"
+  },
+  {
+    "task_id": 100,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 476,
+    "difficulty": "VERY_HARD"
+  },
+  {
+    "task_id": 879,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 226,
+    "difficulty": "VERY_HARD"
+  },
+  {
+    "task_id": 802,
+    "difficulty": "VERY_HARD"
+  },
+  {
+    "task_id": 820,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 979,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 33,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 384,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 759,
+    "difficulty": "VERY_HARD"
+  },
+  {
+    "task_id": 683,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 280,
+    "difficulty": "VERY_HARD"
+  },
+  {
+    "task_id": 249,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 99,
+    "difficulty": "VERY_HARD"
+  },
+  {
+    "task_id": 565,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 463,
+    "difficulty": "VERY_HARD"
+  },
+  {
+    "task_id": 975,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 366,
+    "difficulty": "VERY_HARD"
+  },
+  {
+    "task_id": 860,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 445,
+    "difficulty": "VERY_HARD"
+  },
+  {
+    "task_id": 132,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 552,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 285,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 700,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 214,
+    "difficulty": "VERY_HARD"
+  },
+  {
+    "task_id": 743,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 491,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 327,
+    "difficulty": "VERY_HARD"
+  },
+  {
+    "task_id": 119,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 861,
+    "difficulty": "VERY_HARD"
+  },
+  {
+    "task_id": 945,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 358,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 82,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 574,
+    "difficulty": "VERY_HARD"
+  },
+  {
+    "task_id": 585,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 121,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 364,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 275,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 457,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 421,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 797,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 841,
+    "difficulty": "VERY_HARD"
+  },
+  {
+    "task_id": 816,
+    "difficulty": "VERY_HARD"
+  },
+  {
+    "task_id": 994,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 897,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 935,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 8,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 770,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 341,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 334,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 561,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 177,
+    "difficulty": "EASY"
+  },
+  {
+    "task_id": 199,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "task_id": 365,
+    "difficulty": "VERY_HARD"
+  },
+  {
+    "task_id": 716,
+    "difficulty": "HARD"
+  },
+  {
+    "task_id": 277,
+    "difficulty": "MEDIUM_HARD"
+  },
+  {
+    "task_id": 876,
+    "difficulty": "VERY_HARD"
+  },
+  {
+    "task_id": 460,
+    "difficulty": "VERY_HARD"
+  }
+]

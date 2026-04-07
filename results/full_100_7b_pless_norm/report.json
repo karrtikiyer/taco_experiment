@@ -1,0 +1,41 @@
+{
+  "config": {
+    "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+    "decoding_method": "pless_norm",
+    "temperature": 1.0,
+    "top_p": null,
+    "num_samples": 10,
+    "n_problems": 100,
+    "seed": 42
+  },
+  "difficulty_distribution": {
+    "EASY": 19,
+    "MEDIUM_HARD": 17,
+    "VERY_HARD": 18,
+    "HARD": 19,
+    "MEDIUM": 19
+  },
+  "pass_at_k": {
+    "pass@1": 0.03913043478260869,
+    "pass@3": 0.05371376811594203,
+    "pass@5": 0.05887681159420289,
+    "pass@8": 0.06304347826086956,
+    "pass@10": 0.06521739130434782
+  },
+  "diversity": {
+    "quality_vs_gt": 0.2083966590307291,
+    "self_codebleu": 0.7838489880227503,
+    "gt_coverage": 0.20516880738025567
+  },
+  "image_problems_excluded": [
+    133,
+    198,
+    282,
+    460,
+    876,
+    913,
+    935,
+    994
+  ],
+  "n_problems_after_exclusion": 92
+}
